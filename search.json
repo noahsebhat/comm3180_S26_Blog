@@ -25,13 +25,13 @@
     "href": "index.html",
     "title": "Noah’s Blog",
     "section": "",
-    "text": "A test post\n\n\n\nvisualization\n\ndata stories\n\n\n\nAn example post from a Jupyter notebook\n\n\n\n\n\nJan 12, 2026\n\n\nAn LLM User\n\n\n\n\n\nNo matching items"
+    "text": "A test post\n\n\n\nvisualization\n\ndata stories\n\n\n\nAn example post from a Jupyter notebook\n\n\n\n\n\nJan 12, 2026\n\n\nAn LLM User\n\n\n\n\n\n\n\n\n\n\n\n\nNoah’s Test Blog\n\n\n\nTesting Blog\n\n\n\nTesting Blogging\n\n\n\n\n\nJan 24, 2025\n\n\nNoah\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/01_test_post/Noah_test_blog.html",
     "href": "posts/01_test_post/Noah_test_blog.html",
-    "title": "Noah's Blog",
+    "title": "Noah’s Test Blog",
     "section": "",
-    "text": "title: “Noah’s Test Blog” description: “Testing Blogging” author: “Noah” date: “1/24/2025” categories: - Testing Blog\nTest"
+    "text": "Testing"
   }
 ]
