@@ -2,7 +2,7 @@ project:
   type: website
 
 website:
-  title: "Noah's Blog"
+  title: "Noah's X"
   navbar:
     right:
       - about.qmd
@@ -10,7 +10,7 @@ website:
         href: https://github.com/
 format:
   html:
-    theme: cosmo
+    theme: zephyr
     css: styles.css
 
 execute:

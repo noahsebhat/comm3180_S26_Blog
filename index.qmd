@@ -1,5 +1,5 @@
 ---
-title: Noah's Blog
+title: Noah's X
 listing:
   contents: posts
   sort: date desc

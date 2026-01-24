@@ -1,5 +1,5 @@
 ---
-title: About Noah
+title: About X
 image: headshot.JPG
 about:
   template: jolla
