@@ -5,4 +5,4 @@ about:
   template: jolla
 ---
 
-This blog is intended to document my analysis of and reactions to different data sets and the exciting stories they reveal. Thank you for joining me on this journey!
+Hello! My name is Noah, and I'm a senior at Penn studying Philosophy, Politics & Economics with a minor in Data Science. This blog is intended to document my analysis of and reactions to different data sets and the exciting stories that they reveal. Thank you for joining me on this journey!
