@@ -7,6 +7,20 @@
     "text": "Hello! My name is Noah, and I’m a senior at Penn studying Philosophy, Politics & Economics with a minor in Data Science. This blog is intended to document my analysis of and reactions to different data sets and the exciting stories that they reveal. Thank you for joining me on this journey!"
   },
   {
+    "objectID": "posts/01_test_post/Noah_test_blog.html",
+    "href": "posts/01_test_post/Noah_test_blog.html",
+    "title": "Noah’s Test Blog",
+    "section": "",
+    "text": "Testing"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Noah’s Blog",
+    "section": "",
+    "text": "Dataset of the Week 1: Weather in Philadelphia\n\n\n\nDOW\n\nWeather\n\n\n\n\n\n\n\n\n\nJan 28, 2026\n\n\nNoah Sebhatleab\n\n\n\n\n\n\n\n\n\n\n\n\nNoah’s Test Blog\n\n\n\nTesting Blog\n\n\n\nTesting Blogging\n\n\n\n\n\nJan 24, 2026\n\n\nNoah\n\n\n\n\n\n\n\n\n\n\n\n\nA test post\n\n\n\nvisualization\n\ndata stories\n\n\n\nAn example post from a Jupyter notebook\n\n\n\n\n\nJan 12, 2026\n\n\nAn LLM User\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "posts/000_test_post/index.html",
     "href": "posts/000_test_post/index.html",
     "title": "A test post",
@@ -19,19 +33,5 @@
     "title": "A test post",
     "section": "Stories from data",
     "text": "Stories from data\n\nLet’s set up some data\n\n\nx = ['A', 'B', 'C']\ny = [1, 5, 3]\n\n\nNow let’s visualize it\n\nplt.bar(x, y)\nplt.show()"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Noah’s Blog",
-    "section": "",
-    "text": "Noah’s Test Blog\n\n\n\nTesting Blog\n\n\n\nTesting Blogging\n\n\n\n\n\nJan 24, 2026\n\n\nNoah\n\n\n\n\n\n\n\n\n\n\n\n\nA test post\n\n\n\nvisualization\n\ndata stories\n\n\n\nAn example post from a Jupyter notebook\n\n\n\n\n\nJan 12, 2026\n\n\nAn LLM User\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "posts/01_test_post/Noah_test_blog.html",
-    "href": "posts/01_test_post/Noah_test_blog.html",
-    "title": "Noah’s Test Blog",
-    "section": "",
-    "text": "Testing"
   }
 ]
