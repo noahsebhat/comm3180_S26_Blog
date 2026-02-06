@@ -190,83 +190,67 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="img/wedding_day.jpg" class="img-fluid" width="300"></p>
 <p>I’m not getting married any time soon (at least I don’t think I am), but I sometimes think about what my ideal wedding would be like. An important component of that vision is the wedding date. There’s a lot of factors that dictate a good wedding date, like venue and guest availability, but perhaps the most important is weather. Using publicly available Philadelphia weather data, I looked to determine which single date would be the best for me to get married in Philadelphia, given my weather and wedding type preferences.</p>
 <p>I’ve always thought an outdoor wedding would be cool, so it’s important that it does not rain on the day of my wedding. Thus, my first step in determining my ideal wedding day was finding which has been the dryest day in the last 20 years.</p>
-<div id="ef3a5c09-f23b-4806-9215-4bd9698c6871" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Set up</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Load the data</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>weather_df <span class="op">=</span> pd.read_csv(<span class="st">'data/philadelphia_weather_2005_to_2025.csv'</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>weather_df <span class="op">=</span> weather_df.assign(date<span class="op">=</span>pd.to_datetime(weather_df[<span class="st">'date'</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Set up</p>
+<div id="ef3a5c09-f23b-4806-9215-4bd9698c6871" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="74c3be76-5a84-4d50-a0cc-ac1a0005f04e" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Days in the data that have had no recorded rain</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>no_rain <span class="op">=</span> weather_df[weather_df[<span class="st">"rain"</span>] <span class="op">==</span> <span class="dv">0</span>]</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(no_rain)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>              day  year  high  low  rain  snow       date  day_num  month_num  \
-0       January 1  2005    64   39   0.0   0.0 2005-01-01        1          1   
-3       January 4  2005    55   44   0.0   0.0 2005-01-04        4          1   
-6       January 7  2005    43   36   0.0   0.0 2005-01-07        7          1   
-8       January 9  2005    40   37   0.0   0.0 2005-01-09        9          1   
-9      January 10  2005    50   34   0.0   0.0 2005-01-10       10          1   
-...           ...   ...   ...  ...   ...   ...        ...      ...        ...   
-7662  December 24  2025    51   36   0.0   0.0 2025-12-24       24         12   
-7663  December 25  2025    53   32   0.0   0.0 2025-12-25       25         12   
-7666  December 28  2025    42   26   0.0   0.0 2025-12-28       28         12   
-7668  December 30  2025    35   29   0.0   0.0 2025-12-30       30         12   
-7669  December 31  2025    35   27   0.0   0.0 2025-12-31       31         12   
-
-      dow   dow_name     month  
-0       5   Saturday   January  
-3       1    Tuesday   January  
-6       4     Friday   January  
-8       6     Sunday   January  
-9       0     Monday   January  
-...   ...        ...       ...  
-7662    2  Wednesday  December  
-7663    3   Thursday  December  
-7666    6     Sunday  December  
-7668    1    Tuesday  December  
-7669    2  Wednesday  December  
-
-[5137 rows x 12 columns]</code></pre>
+<p>Loading the data</p>
+<div id="b6650aef-ab3b-4f22-b0dc-b2667f02c17f" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>weather_df <span class="op">=</span> pd.read_csv(<span class="st">'data/philadelphia_weather_2005_to_2025.csv'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>weather_df <span class="op">=</span> weather_df.assign(date<span class="op">=</span>pd.to_datetime(weather_df[<span class="st">'date'</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p>Subsetting days in the data that have had no recorded rain</p>
+<div id="74c3be76-5a84-4d50-a0cc-ac1a0005f04e" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>no_rain <span class="op">=</span> weather_df[weather_df[<span class="st">"rain"</span>] <span class="op">==</span> <span class="dv">0</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="161dfca7-1323-4a86-86b0-e1a6fc09cbd6" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Most commonly ocurring day in the subset</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>dryest_day <span class="op">=</span> no_rain[<span class="st">"day"</span>].value_counts().idxmax()</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dryest_day)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Identifying commonly ocurring day in the subset</p>
+<div id="161dfca7-1323-4a86-86b0-e1a6fc09cbd6" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dryest_day <span class="op">=</span> no_rain[<span class="st">"day"</span>].value_counts().idxmax()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dryest_day)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>August 26</code></pre>
 </div>
 </div>
-<div id="851bafba-57e1-402b-bea4-3a403fd23d19" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Amount of times it has not rained on that day</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>dryest_day_df <span class="op">=</span> no_rain[no_rain[<span class="st">"day"</span>] <span class="op">==</span> dryest_day]</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>count <span class="op">=</span> <span class="bu">len</span>(dryest_day_df)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(count)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Counting the amount of times it has not rained on that day</p>
+<div id="851bafba-57e1-402b-bea4-3a403fd23d19" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dryest_day_df <span class="op">=</span> no_rain[no_rain[<span class="st">"day"</span>] <span class="op">==</span> dryest_day]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>count <span class="op">=</span> <span class="bu">len</span>(dryest_day_df)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(count)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>21</code></pre>
 </div>
 </div>
 <p>Since 2005, August 26th has been the dryest day, not recording a single day of rain. That’s great! But as a San Francisco native, I’ve grown up around moderate weather and don’t like it when it’s too hot or cold. So next, I wanted to find what the average temperature on August 26th has been over the last 20 years.</p>
+<p>Caluclating average temperature on August 26th</p>
 <div id="df772bf7-62a7-4847-b62b-688a51a00b5e" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Caluclating average temperature on August 26th</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>avg_temp <span class="op">=</span> (dryest_day_df[<span class="st">"high"</span>] <span class="op">+</span> dryest_day_df[<span class="st">"low"</span>]).mean() <span class="op">/</span> <span class="dv">2</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(avg_temp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>avg_temp <span class="op">=</span> (dryest_day_df[<span class="st">"high"</span>] <span class="op">+</span> dryest_day_df[<span class="st">"low"</span>]).mean() <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>avg_temp <span class="op">=</span> <span class="bu">round</span>(avg_temp, <span class="dv">1</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(avg_temp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>76.97619047619048</code></pre>
+<pre><code>77.0</code></pre>
 </div>
 </div>
-<p>The average temperature on August 26th has been 77 degrees farenheight. That’s literally perfect. So save the date! If and when I get married in Philadelphia, it will be on August 26th.</p>
+<p>The average temperature on August 26th has been 77 degrees farenheight. That’s literally perfect. However, out of caution, I was interested in further examining the temperature data to make sure that the average temperature on August 26th hasn’t been trending too far up or down.</p>
+<p>Plotting the data</p>
+<div id="f5fd5c9d-e5a6-486e-847a-1e156279e3ee" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dryest_day_df[<span class="st">"avg_temp"</span>] <span class="op">=</span> (dryest_day_df[<span class="st">"high"</span>] <span class="op">+</span> dryest_day_df[<span class="st">"low"</span>]) <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(dryest_day_df[<span class="st">"year"</span>], dryest_day_df[<span class="st">"avg_temp"</span>])</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Average Temperature"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Average Temperature on August 26th (2005 - 2025)"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="DOW1_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Looking at the data, there doesn’t appear to a meaningful trend one way or the other so August 26th still checks out!</p>
+<p>Of course, no date comes with a weather guarantee, but if historical data is any guide, August 26th has some of the best odds for dry, warm weather in Philadelphia. So save the date! If and when I get married in Philadelphia, it will be on August 26th.</p>
 
 
 
