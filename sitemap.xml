@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/about.html</loc>
-    <lastmod>2026-02-20T23:24:19.182Z</lastmod>
-  </url>
-  <url>
-    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/posts/DOW2_personality/DOW2.html</loc>
-    <lastmod>2026-02-20T23:24:19.188Z</lastmod>
-  </url>
-  <url>
-    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/posts/01_test_post/Noah_test_blog.html</loc>
-    <lastmod>2026-02-20T23:24:19.185Z</lastmod>
-  </url>
-  <url>
-    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/index.html</loc>
-    <lastmod>2026-02-20T23:24:19.184Z</lastmod>
-  </url>
-  <url>
-    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/posts/000_test_post/index.html</loc>
-    <lastmod>2026-02-20T23:24:19.184Z</lastmod>
-  </url>
-  <url>
-    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/posts/DOW1_weather/DOW1.html</loc>
-    <lastmod>2026-02-20T23:24:19.185Z</lastmod>
+    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/DOW2 Analysis Notebook.html</loc>
+    <lastmod>2026-02-20T23:27:39.109Z</lastmod>
   </url>
   <url>
     <loc>https://noahsebhat.github.io/comm3180_S26_Blog/posts/DOW2_personality/DOW2 Analysis Notebook.html</loc>
-    <lastmod>2026-02-20T23:24:19.187Z</lastmod>
+    <lastmod>2026-02-20T23:27:39.114Z</lastmod>
+  </url>
+  <url>
+    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/posts/01_test_post/Noah_test_blog.html</loc>
+    <lastmod>2026-02-20T23:27:39.112Z</lastmod>
+  </url>
+  <url>
+    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/index.html</loc>
+    <lastmod>2026-02-20T23:27:39.111Z</lastmod>
+  </url>
+  <url>
+    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/posts/000_test_post/index.html</loc>
+    <lastmod>2026-02-20T23:27:39.111Z</lastmod>
+  </url>
+  <url>
+    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/posts/DOW1_weather/DOW1.html</loc>
+    <lastmod>2026-02-20T23:27:39.112Z</lastmod>
+  </url>
+  <url>
+    <loc>https://noahsebhat.github.io/comm3180_S26_Blog/about.html</loc>
+    <lastmod>2026-02-20T23:27:39.109Z</lastmod>
   </url>
 </urlset>
