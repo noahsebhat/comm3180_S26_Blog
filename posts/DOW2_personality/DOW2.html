@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Noah Sebhatleab">
+<meta name="dcterms.date" content="2026-02-20">
 
-<title>DOW2 Analysis Notebook – Noah’s Blog</title>
+<title>The Most Average American – Noah’s Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -148,14 +150,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">DOW2 Analysis Notebook</h1>
-                      </div>
+      <h1 class="title">The Most Average American</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">DOW</div>
+                <div class="quarto-category">Personality</div>
+              </div>
+                  </div>
   </div>
     
   
   <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Noah Sebhatleab </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 20, 2026</p>
+      </div>
+    </div>
     
       
     </div>
@@ -172,202 +190,144 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>Set up</p>
-<div id="f14b65f0-9822-4ed9-b780-966e9955f8d6" class="cell" data-execution_count="2">
+<p><img src="img/avg_American.jpg" class="img-fluid" width="500"></p>
+<p>Political speeches, marketing reports, and news headlines often refer to the “average American”. But in a country as large and diverse as the United States, it’s not immediately clear who that person is or what they’re actually like. Using publicly available personality survey data, I tried to figure it out and piece together a portrait of this frequently mentioned but rarely defined figure.</p>
+<p>First, I wanted to understand the demographics of the average American: their age, race, and gender. According to the data, the average American is a 21 year old White female.</p>
+<p>Set up and calculating central measurements for age, race, and gender</p>
+<div id="0449cd2e-619b-42dc-a792-7a97a9982d57" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="d7309423-be95-412d-a7f8-d4a56ca3739a" class="cell" data-execution_count="3">
+<div id="825f731a-3619-40b6-b9de-bf6950888743" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>big5 <span class="op">=</span> pd.read_csv(<span class="st">'data/openpsych_data_scored.csv'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a2b6e6b8-d531-4104-8df4-6aa83ecfdf38" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>big5.columns</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<pre><code>Index(['race', 'age', 'engnat', 'gender', 'hand', 'source', 'country', 'E1',
-       'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9', 'E10', 'N1', 'N2', 'N3',
-       'N4', 'N5', 'N6', 'N7', 'N8', 'N9', 'N10', 'A1', 'A2', 'A3', 'A4', 'A5',
-       'A6', 'A7', 'A8', 'A9', 'A10', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7',
-       'C8', 'C9', 'C10', 'O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7', 'O8', 'O9',
-       'O10', 'race_cat', 'gender_cat', 'O', 'C', 'E', 'A', 'N', 'E_pct',
-       'A_pct', 'C_pct', 'N_pct', 'O_pct'],
-      dtype='str')</code></pre>
+<div id="f4a596be-db6c-44cb-8868-eb822f5609c8" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>big5_us <span class="op">=</span> big5[big5[<span class="st">"country"</span>] <span class="op">==</span> <span class="st">"US"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
-<p>Average American (Demographics)</p>
-<p>Filter for Americans (completed survey in US)</p>
-<div id="ffa7f3da-64e3-4e2c-b8aa-e7acdf1ccf7a" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>big5_us <span class="op">=</span> big5[big5[<span class="st">"country"</span>] <span class="op">==</span> <span class="st">"US"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="7cf4a58c-67d9-447d-bb84-549c4a42d59c" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(big5_us)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>8753</code></pre>
-</div>
-</div>
-<p>Age</p>
-<div id="75451d93-f179-4e27-a7fa-25eb9de33dea" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>med_age <span class="op">=</span> big5_us[<span class="st">"age"</span>].median()</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(med_age)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="70a19be0-4a6d-4a9c-b69d-d9f000503614" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>med_age <span class="op">=</span> big5_us[<span class="st">"age"</span>].median()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(med_age)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>21.0</code></pre>
 </div>
 </div>
-<p>Race</p>
-<div id="6ce10254-b3f7-4279-a91f-bac6328ee5a6" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mode_race <span class="op">=</span> big5_us[<span class="st">"race"</span>].mode()</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mode_race)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="401c8096-9d96-484f-aadc-d2efc8fb3548" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mode_race <span class="op">=</span> big5_us[<span class="st">"race"</span>].mode()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mode_race)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>0    3
 Name: race, dtype: int64</code></pre>
 </div>
 </div>
-<div id="f22e1792-abc5-4b0d-8f39-5fba351e5abd" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>race_values <span class="op">=</span> <span class="st">'''1=Mixed Race, 2=Arctic (Siberian, Eskimo), 3=Caucasian (European), </span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="st">4=Caucasian (Indian), 5=Caucasian (Middle East), 6=Caucasian (North African, Other), </span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="st">7=Indigenous Australian, 8=Native American, </span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="st">9=North East Asian (Mongol, Tibetan, Korean Japanese, etc), </span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="st">10=Pacific (Polynesian, Micronesian, etc), </span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="st">11=South East Asian (Chinese, Thai, Malay, Filipino, etc), 12=West African, Bushmen, Ethiopian, 13=Other, 0=missed</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="st">'''</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>parts <span class="op">=</span> re.split(<span class="vs">r'</span>(?:<span class="vs">,</span><span class="dv">\s</span><span class="op">+</span>)<span class="op">?</span><span class="kw">(</span><span class="pp">[0-9]</span><span class="op">+</span><span class="kw">)</span><span class="vs">='</span>, race_values.strip())</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>race_keys <span class="op">=</span> [<span class="bu">int</span>(key_val) <span class="cf">for</span> key_val <span class="kw">in</span> parts[<span class="dv">1</span>::<span class="dv">2</span>]]</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>race_values <span class="op">=</span> parts[<span class="dv">2</span>::<span class="dv">2</span>] <span class="co">#Pasted from class workbook</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="4cceee1f-9727-4343-a41d-e54a448ed356" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>race_values <span class="op">=</span> <span class="st">'''1=Mixed Race, 2=Arctic (Siberian, Eskimo), 3=Caucasian (European), </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">4=Caucasian (Indian), 5=Caucasian (Middle East), 6=Caucasian (North African, Other), </span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">7=Indigenous Australian, 8=Native American, </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">9=North East Asian (Mongol, Tibetan, Korean Japanese, etc), </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="st">10=Pacific (Polynesian, Micronesian, etc), </span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="st">11=South East Asian (Chinese, Thai, Malay, Filipino, etc), 12=West African, Bushmen, Ethiopian, 13=Other, 0=missed</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">'''</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>parts <span class="op">=</span> re.split(<span class="vs">r'</span>(?:<span class="vs">,</span><span class="dv">\s</span><span class="op">+</span>)<span class="op">?</span><span class="kw">(</span><span class="pp">[0-9]</span><span class="op">+</span><span class="kw">)</span><span class="vs">='</span>, race_values.strip())</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>race_keys <span class="op">=</span> [<span class="bu">int</span>(key_val) <span class="cf">for</span> key_val <span class="kw">in</span> parts[<span class="dv">1</span>::<span class="dv">2</span>]]</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>race_values <span class="op">=</span> parts[<span class="dv">2</span>::<span class="dv">2</span>] <span class="co">#Pasted from class workbook</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>race_mapping <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(race_keys,race_values))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="1546706a-1739-4b57-b6f2-381aa6dbda4d" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>race_mapping <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(race_keys,race_values))</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>race_mapping <span class="co">#Pasted from class workbook</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-<pre><code>{1: 'Mixed Race',
- 2: 'Arctic (Siberian, Eskimo)',
- 3: 'Caucasian (European)',
- 4: 'Caucasian (Indian)',
- 5: 'Caucasian (Middle East)',
- 6: 'Caucasian (North African, Other)',
- 7: 'Indigenous Australian',
- 8: 'Native American',
- 9: 'North East Asian (Mongol, Tibetan, Korean Japanese, etc)',
- 10: 'Pacific (Polynesian, Micronesian, etc)',
- 11: 'South East Asian (Chinese, Thai, Malay, Filipino, etc)',
- 12: 'West African, Bushmen, Ethiopian',
- 13: 'Other',
- 0: 'missed'}</code></pre>
-</div>
-</div>
-<p>European caucasian</p>
-<p>Gender</p>
-<div id="d7513103-a5ab-45b4-b5fd-5bc2504f77b5" class="cell" data-execution_count="43">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mode_gender <span class="op">=</span> big5_us[<span class="st">"gender"</span>].mode()</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mode_gender)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e77264db-f7db-49c9-ad7e-7eda72f261f4" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mode_gender <span class="op">=</span> big5_us[<span class="st">"gender"</span>].mode()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mode_gender)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>0    2
 Name: gender, dtype: int64</code></pre>
 </div>
 </div>
-<p>Female</p>
-<section id="the-average-american-according-to-the-sample-is-a-21-year-old-white-female." class="level4">
-<h4 class="anchored" data-anchor-id="the-average-american-according-to-the-sample-is-a-21-year-old-white-female.">The average American, according to the sample, is a 21 year old white female.</h4>
-<p>Peronality</p>
-<div id="a8141488-bfe3-4f91-bc3b-c49fb28f068a" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>traits <span class="op">=</span> [<span class="st">'E_pct'</span>, <span class="st">'A_pct'</span>, <span class="st">'C_pct'</span>, <span class="st">'N_pct'</span>, <span class="st">'O_pct'</span>]</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>med_personality <span class="op">=</span> big5_us[traits].median().<span class="bu">round</span>(<span class="dv">1</span>)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>med_personality</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="12">
-<pre><code>E_pct    49.0
-A_pct    54.0
-C_pct    52.0
-N_pct    54.0
-O_pct    52.0
-dtype: float64</code></pre>
+<p>But what is this person like? The personality survey scores respondents across five traits: openness, conscientiousness, extroversion, agreeableness, and neuroticism, giving them a percentile score for each. Calculating the median for each trait, I found that the average Americans falls into the 52nd percentile for openness, 52nd for conscientousness, 49th for extroversion, 54th for agreeableness, 52nd for conscientiousness, and 54th for neuroticism.</p>
+<p>Calculating median for each trait and plotting</p>
+<div id="1d71ae8f-7e88-4ba9-9d2d-11156d0e8d6f" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>traits <span class="op">=</span> [<span class="st">'E_pct'</span>, <span class="st">'A_pct'</span>, <span class="st">'C_pct'</span>, <span class="st">'N_pct'</span>, <span class="st">'O_pct'</span>]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>med_personality <span class="op">=</span> big5_us[traits].median().<span class="bu">round</span>(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div id="57fde3ef-4c32-449b-ab89-f45c161c3991" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>trait_labels <span class="op">=</span> {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'E_pct'</span>: <span class="st">'Extraversion'</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'A_pct'</span>: <span class="st">'Agreeableness'</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'C_pct'</span>: <span class="st">'Conscientiousness'</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'N_pct'</span>: <span class="st">'Neuroticism'</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'O_pct'</span>: <span class="st">'Openness'</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a4059a3e-d6d3-4252-9bb3-b61dc7502774" class="cell" data-execution_count="40">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>trait_labels <span class="op">=</span> {</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'E_pct'</span>: <span class="st">'Extraversion'</span>,</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'A_pct'</span>: <span class="st">'Agreeableness'</span>,</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'C_pct'</span>: <span class="st">'Conscientiousness'</span>,</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'N_pct'</span>: <span class="st">'Neuroticism'</span>,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'O_pct'</span>: <span class="st">'Openness'</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="56675ce2-4e6f-438c-af17-a3dc24cb0fce" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>med_personality <span class="op">=</span> med_personality.rename(index <span class="op">=</span> trait_labels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="5a4d92e7-3758-40a2-a143-e2d0c9af7954" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>med_personality <span class="op">=</span> med_personality.rename(index <span class="op">=</span> trait_labels)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>med_personality</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="19">
-<pre><code>Extraversion         49.0
-Agreeableness        54.0
-Conscientiousness    52.0
-Neuroticism          54.0
-Openness             52.0
-dtype: float64</code></pre>
+<div id="325315d2-5ade-4d1e-9a3c-e71fb2ecfc0c" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
-<div id="adbbef4b-281b-4229-a75c-015815d83bac" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="8410d2d9-ace5-47b5-9cdf-08c9379c2d2c" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>med_personality.plot(kind <span class="op">=</span> <span class="st">'bar'</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Median American Personality Profile"</span>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Personality Trait"</span>)</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Percentile"</span>)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="4df6a207-128e-477b-8e15-5aa2155041ca" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>med_personality.plot(kind <span class="op">=</span> <span class="st">'bar'</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Median American Personality Profile"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Personality Trait"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Percentile"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="DOW2 Analysis Notebook_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="DOW2_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Deviation of respondents</p>
-<div id="5464a7d1-a649-4ab2-9efd-24e36d833954" class="cell" data-execution_count="41">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>big5_us_clean <span class="op">=</span> big5_us.dropna(subset <span class="op">=</span> traits) <span class="co">#This command suddenly started returning 'nan'</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#so I used ChatGPT to add a line to drop the NAs</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>med_personality <span class="op">=</span> big5_us_clean[traits].median()</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> <span class="bu">abs</span>(big5_us[traits] <span class="op">-</span> med_personality)</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>big5_us[<span class="st">'deviation'</span>] <span class="op">=</span> diff.mean(axis <span class="op">=</span> <span class="dv">1</span>)</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>median_dev <span class="op">=</span> big5_us[<span class="st">'deviation'</span>].median()</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(median_dev) <span class="co">#Also used ChatGPT to think through how I could structure the deviation commands</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>While these results help shed light on the identity of the average American, they may be more of an abstraction rather than an accurate representation. To determine how representative this profile really is, I measured how far each person’s personality differs from the median across the five traits. On average, respondents differ from the median profile by 25.4 percentile points per trait!</p>
+<p>Deviation calculations</p>
+<div id="ef2a0c93-ec6b-413d-bbe6-0370c7c09b0e" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>big5_us_clean <span class="op">=</span> big5_us.dropna(subset <span class="op">=</span> traits) <span class="co">#This command suddenly started returning 'nan'</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#so I used ChatGPT to add a line to drop the NAs</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>med_personality <span class="op">=</span> big5_us_clean[traits].median()</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> <span class="bu">abs</span>(big5_us[traits] <span class="op">-</span> med_personality)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>big5_us[<span class="st">'deviation'</span>] <span class="op">=</span> diff.mean(axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>median_dev <span class="op">=</span> big5_us[<span class="st">'deviation'</span>].median()</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(median_dev) <span class="co">#Also used ChatGPT to think through how I could structure the deviation commands</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>25.4</code></pre>
 </div>
 </div>
-<p>Person by age</p>
-<div id="6a1f2627-2ea0-4353-b936-936820028370" class="cell" data-execution_count="42">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">35</span>, <span class="dv">50</span>, <span class="dv">100</span>]</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> [<span class="st">'Under 18'</span>, <span class="st">'18–24'</span>, <span class="st">'25–34'</span>, <span class="st">'35–49'</span>, <span class="st">'50+'</span>]</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>big5_us[<span class="st">'age group'</span>] <span class="op">=</span> pd.cut(</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    big5_us[<span class="st">'age'</span>],</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    bins<span class="op">=</span>bins,</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>labels,</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    right<span class="op">=</span><span class="va">False</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>) <span class="co">#Used ChatGPT to see how I could group by age and make the table</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In other words, the average American isn’t very average at all. Part of the reason may be that personality shifts over time, meaning there isn’t one typical profile for all ages. To test this, I calculated the average personality profiles across different age groups: under 18, 18-24, 25-34, 35-49, and 50+.</p>
+<p>Personality profiles by age</p>
+<div id="c7b5afbf-9267-447b-894f-477bb3bd5525" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">35</span>, <span class="dv">50</span>, <span class="dv">100</span>]</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> [<span class="st">'Under 18'</span>, <span class="st">'18–24'</span>, <span class="st">'25–34'</span>, <span class="st">'35–49'</span>, <span class="st">'50+'</span>]</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>big5_us[<span class="st">'age group'</span>] <span class="op">=</span> pd.cut(</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    big5_us[<span class="st">'age'</span>],</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    bins<span class="op">=</span>bins,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>labels,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    right<span class="op">=</span><span class="va">False</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>) <span class="co">#Used ChatGPT to see how I could group by age and make the table</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="a82dc930-0849-4c65-be0b-6c1545786882" class="cell" data-execution_count="39">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>traits <span class="op">=</span> [<span class="st">'E_pct'</span>, <span class="st">'A_pct'</span>, <span class="st">'C_pct'</span>, <span class="st">'N_pct'</span>, <span class="st">'O_pct'</span>]</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>age_profiles <span class="op">=</span> big5_us.groupby(<span class="st">'age group'</span>)[traits].median()</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>age_profiles <span class="op">=</span> big5_us.groupby(<span class="st">'age group'</span>)[traits].median()</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>age_profiles.columns <span class="op">=</span> [<span class="st">'Extraversion'</span>,</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Agreeableness'</span>,</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Conscientiousness'</span>,</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Neuroticism'</span>,</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Openness'</span>]</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>age_profiles</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="39">
+<div id="e4b7ccac-cd6f-41cb-b0d1-6d20bc9b349f" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>traits <span class="op">=</span> [<span class="st">'E_pct'</span>, <span class="st">'A_pct'</span>, <span class="st">'C_pct'</span>, <span class="st">'N_pct'</span>, <span class="st">'O_pct'</span>]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>age_profiles <span class="op">=</span> big5_us.groupby(<span class="st">'age group'</span>)[traits].median()</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>age_profiles <span class="op">=</span> big5_us.groupby(<span class="st">'age group'</span>)[traits].median()</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>age_profiles.columns <span class="op">=</span> [<span class="st">'Extraversion'</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Agreeableness'</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Conscientiousness'</span>,</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Neuroticism'</span>,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Openness'</span>]</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>age_profiles</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
 <div>
 
 
@@ -437,9 +397,10 @@ dtype: float64</code></pre>
 </div>
 </div>
 </div>
+<p>Unsurprisingly, personality varies noticeably across age groups, with older Americans scoring higher across almost every trait. The biggest changes appear in conscientiousness and agreeableness, which both rise sharply with age, suggesting that Americans tend to become more responsible and socially cooperative over time.</p>
+<p>In the end, the “average American” turns out to be more of a statistical amalgamation rather a true representation. While some people come close to or maybe even match this profile, most differ from it significantly, and what counts as “average” changes across age. In a country as diverse as the US, no single identity can capture everybody. And that’s okay!</p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
