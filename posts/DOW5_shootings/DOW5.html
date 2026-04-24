@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Noah Sebhatleab">
-<meta name="dcterms.date" content="2026-02-20">
+<meta name="dcterms.date" content="2026-03-20">
 
-<title>The Most Average American – Noah’s Blog</title>
+<title>When do Shooting in Philadelphia Happen? – Noah’s Blog</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -63,7 +63,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -107,9 +107,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
-
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -152,10 +149,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">The Most Average American</h1>
+      <h1 class="title">When do Shooting in Philadelphia Happen?</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">DOW</div>
-                <div class="quarto-category">Personality</div>
+                <div class="quarto-category">Shootings</div>
               </div>
                   </div>
   </div>
@@ -173,7 +170,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 20, 2026</p>
+        <p class="date">March 20, 2026</p>
       </div>
     </div>
     
@@ -192,215 +189,158 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p><img src="img/avg_American.jpg" class="img-fluid" width="500"></p>
-<p>Political speeches, marketing reports, and news headlines often refer to the “average American”. But in a country as large and diverse as the United States, it’s not immediately clear who that person is or what they’re actually like. Using publicly available personality survey data, I tried to figure it out and piece together a portrait of this frequently mentioned but rarely defined figure.</p>
-<p>First, I wanted to understand the demographics of the average American: their age, race, and gender. According to the data, the average American is a 21 year old White female.</p>
-<p>Set up and calculating central measurements for age, race, and gender</p>
-<div id="0449cd2e-619b-42dc-a792-7a97a9982d57" class="cell" data-execution_count="3">
+<p><img src="img/gun.jpeg" class="img-fluid" width="500"></p>
+<p>Shootings in Philadelphia are often discussed in terms of annual totals - how many incidents occured this year compared to others. But those figures alone don’t tell us much about when gun violence actually happens in the city. Are shootings concentrated at certain times of the day? Are there more incidents on specific days of the week? And how does gun violence change with the seasons? In this post, I use open Philadelphia shooting data, along with historical weather data, to explore patterns in shootings incidents across time and weather conditions to better understand when violence is most likely to occur.</p>
+<p>Shootings are most often thought to occur at night. But is that really the case?</p>
+<p>Set up</p>
+<div id="e443991a-a959-4e22-b547-fb1de88e4a5f" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>warnings.simplefilter(<span class="st">'ignore'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="825f731a-3619-40b6-b9de-bf6950888743" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>big5 <span class="op">=</span> pd.read_csv(<span class="st">'data/openpsych_data_scored.csv'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="64950ece-a5b0-46a5-8831-1ce74d48201a" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>shoot <span class="op">=</span> pd.read_csv(<span class="st">'data/shootings.csv'</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="f4a596be-db6c-44cb-8868-eb822f5609c8" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>big5_us <span class="op">=</span> big5[big5[<span class="st">"country"</span>] <span class="op">==</span> <span class="st">"US"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Extracting hour from time variable and creating bar plot</p>
+<div id="ccb9bb09-107b-460a-8bb2-f709cd3813bf" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>shoot[<span class="st">'time'</span>] <span class="op">=</span> pd.to_datetime(shoot[<span class="st">'time'</span>])</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>shoot[<span class="st">'hour'</span>] <span class="op">=</span> shoot[<span class="st">'time'</span>].dt.hour</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>hour_counts <span class="op">=</span> shoot[<span class="st">'hour'</span>].value_counts().sort_index()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="70a19be0-4a6d-4a9c-b69d-d9f000503614" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>med_age <span class="op">=</span> big5_us[<span class="st">"age"</span>].median()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(med_age)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>21.0</code></pre>
-</div>
-</div>
-<div id="401c8096-9d96-484f-aadc-d2efc8fb3548" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mode_race <span class="op">=</span> big5_us[<span class="st">"race"</span>].mode()</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mode_race)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>0    3
-Name: race, dtype: int64</code></pre>
-</div>
-</div>
-<div id="4cceee1f-9727-4343-a41d-e54a448ed356" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>race_values <span class="op">=</span> <span class="st">'''1=Mixed Race, 2=Arctic (Siberian, Eskimo), 3=Caucasian (European), </span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">4=Caucasian (Indian), 5=Caucasian (Middle East), 6=Caucasian (North African, Other), </span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">7=Indigenous Australian, 8=Native American, </span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">9=North East Asian (Mongol, Tibetan, Korean Japanese, etc), </span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="st">10=Pacific (Polynesian, Micronesian, etc), </span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="st">11=South East Asian (Chinese, Thai, Malay, Filipino, etc), 12=West African, Bushmen, Ethiopian, 13=Other, 0=missed</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">'''</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>parts <span class="op">=</span> re.split(<span class="vs">r'</span>(?:<span class="vs">,</span><span class="dv">\s</span><span class="op">+</span>)<span class="op">?</span><span class="kw">(</span><span class="pp">[0-9]</span><span class="op">+</span><span class="kw">)</span><span class="vs">='</span>, race_values.strip())</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>race_keys <span class="op">=</span> [<span class="bu">int</span>(key_val) <span class="cf">for</span> key_val <span class="kw">in</span> parts[<span class="dv">1</span>::<span class="dv">2</span>]]</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>race_values <span class="op">=</span> parts[<span class="dv">2</span>::<span class="dv">2</span>] <span class="co">#Pasted from class workbook</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>race_mapping <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(race_keys,race_values))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="e77264db-f7db-49c9-ad7e-7eda72f261f4" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mode_gender <span class="op">=</span> big5_us[<span class="st">"gender"</span>].mode()</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mode_gender)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>0    2
-Name: gender, dtype: int64</code></pre>
-</div>
-</div>
-<p>But what is this person like? The personality survey scores respondents across five traits: openness, conscientiousness, extroversion, agreeableness, and neuroticism, giving them a percentile score for each. Calculating the median for each trait, I found that the average Americans falls into the 52nd percentile for openness, 52nd for conscientousness, 49th for extroversion, 54th for agreeableness, 52nd for conscientiousness, and 54th for neuroticism.</p>
-<p>Calculating median for each trait and plotting</p>
-<div id="1d71ae8f-7e88-4ba9-9d2d-11156d0e8d6f" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>traits <span class="op">=</span> [<span class="st">'E_pct'</span>, <span class="st">'A_pct'</span>, <span class="st">'C_pct'</span>, <span class="st">'N_pct'</span>, <span class="st">'O_pct'</span>]</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>med_personality <span class="op">=</span> big5_us[traits].median().<span class="bu">round</span>(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="57fde3ef-4c32-449b-ab89-f45c161c3991" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>trait_labels <span class="op">=</span> {</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'E_pct'</span>: <span class="st">'Extraversion'</span>,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'A_pct'</span>: <span class="st">'Agreeableness'</span>,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'C_pct'</span>: <span class="st">'Conscientiousness'</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'N_pct'</span>: <span class="st">'Neuroticism'</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'O_pct'</span>: <span class="st">'Openness'</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="56675ce2-4e6f-438c-af17-a3dc24cb0fce" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>med_personality <span class="op">=</span> med_personality.rename(index <span class="op">=</span> trait_labels)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="325315d2-5ade-4d1e-9a3c-e71fb2ecfc0c" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="4df6a207-128e-477b-8e15-5aa2155041ca" class="cell" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>med_personality.plot(kind <span class="op">=</span> <span class="st">'bar'</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Median American Personality Profile"</span>)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Personality Trait"</span>)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Percentile"</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="04db4603-bb0d-452a-899f-de8d340df802" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hour_counts.plot(kind <span class="op">=</span> <span class="st">'bar'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Hour of Day"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Number of Shootings"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Shootings by Time of Day"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="DOW2_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="DOW5_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>While these results help shed light on the identity of the average American, they may be more of an abstraction rather than an accurate representation. To determine how representative this profile really is, I measured how far each person’s personality differs from the median across the five traits. On average, respondents differ from the median profile by 25.4 percentile points per trait!</p>
-<p>Deviation calculations</p>
-<div id="ef2a0c93-ec6b-413d-bbe6-0370c7c09b0e" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>big5_us_clean <span class="op">=</span> big5_us.dropna(subset <span class="op">=</span> traits) <span class="co">#This command suddenly started returning 'nan'</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#so I used ChatGPT to add a line to drop the NAs</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>med_personality <span class="op">=</span> big5_us_clean[traits].median()</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> <span class="bu">abs</span>(big5_us[traits] <span class="op">-</span> med_personality)</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>big5_us[<span class="st">'deviation'</span>] <span class="op">=</span> diff.mean(axis <span class="op">=</span> <span class="dv">1</span>)</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>median_dev <span class="op">=</span> big5_us[<span class="st">'deviation'</span>].median()</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(median_dev) <span class="co">#Also used ChatGPT to think through how I could structure the deviation commands</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>25.4</code></pre>
+<p>This graph shows the total count of shooting incidents by the hour of the day. As expected, there is a disproportionate amount of shootings in the evening and early morning, with the total per hour steadily rising from 1:00 PM and peaking at 9:00 PM. However, hourly counts remain high until about 1:00 AM before rapidly falling through the rest of the morning.</p>
+<p>This makes sense since more people may be out in social settings (and away from more structured environments like work), alcohol use is higher, and there’s less public visibility. But how do these trends carry over the course of the week?</p>
+<p>Creating bar chart</p>
+<div id="890b803a-b43c-4e22-968e-a43a1f50aa77" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>shoot[<span class="st">'date_'</span>] <span class="op">=</span> pd.to_datetime(shoot[<span class="st">'date_'</span>])</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>shoot[<span class="st">'day_of_week'</span>] <span class="op">=</span> shoot[<span class="st">'date_'</span>].dt.day_name()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>day_counts <span class="op">=</span> shoot[<span class="st">'day_of_week'</span>].value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div id="a7a3c5d4-28f5-4181-befb-34996d9f586f" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>order <span class="op">=</span> [<span class="st">'Monday'</span>, <span class="st">'Tuesday'</span>, <span class="st">'Wednesday'</span>, <span class="st">'Thursday'</span>, <span class="st">'Friday'</span>, <span class="st">'Saturday'</span>, <span class="st">'Sunday'</span>]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>day_counts <span class="op">=</span> day_counts.reindex(order)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>In other words, the average American isn’t very average at all. Part of the reason may be that personality shifts over time, meaning there isn’t one typical profile for all ages. To test this, I calculated the average personality profiles across different age groups: under 18, 18-24, 25-34, 35-49, and 50+.</p>
-<p>Personality profiles by age</p>
-<div id="c7b5afbf-9267-447b-894f-477bb3bd5525" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">35</span>, <span class="dv">50</span>, <span class="dv">100</span>]</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> [<span class="st">'Under 18'</span>, <span class="st">'18–24'</span>, <span class="st">'25–34'</span>, <span class="st">'35–49'</span>, <span class="st">'50+'</span>]</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>big5_us[<span class="st">'age group'</span>] <span class="op">=</span> pd.cut(</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    big5_us[<span class="st">'age'</span>],</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    bins<span class="op">=</span>bins,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>labels,</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    right<span class="op">=</span><span class="va">False</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>) <span class="co">#Used ChatGPT to see how I could group by age and make the table</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="e4b7ccac-cd6f-41cb-b0d1-6d20bc9b349f" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>traits <span class="op">=</span> [<span class="st">'E_pct'</span>, <span class="st">'A_pct'</span>, <span class="st">'C_pct'</span>, <span class="st">'N_pct'</span>, <span class="st">'O_pct'</span>]</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>age_profiles <span class="op">=</span> big5_us.groupby(<span class="st">'age group'</span>)[traits].median()</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>age_profiles <span class="op">=</span> big5_us.groupby(<span class="st">'age group'</span>)[traits].median()</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>age_profiles.columns <span class="op">=</span> [<span class="st">'Extraversion'</span>,</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Agreeableness'</span>,</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Conscientiousness'</span>,</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Neuroticism'</span>,</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'Openness'</span>]</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>age_profiles</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
+<div id="760eecd7-5c0e-437b-8ba7-83dc57cb5e08" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>day_counts.plot(kind <span class="op">=</span> <span class="st">'bar'</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Day of the Week"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Number of Shootings"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Shootings by Day of the Week"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
 <div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">Extraversion</th>
-<th data-quarto-table-cell-role="th">Agreeableness</th>
-<th data-quarto-table-cell-role="th">Conscientiousness</th>
-<th data-quarto-table-cell-role="th">Neuroticism</th>
-<th data-quarto-table-cell-role="th">Openness</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">age group</th>
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Under 18</th>
-<td>49.0</td>
-<td>42.0</td>
-<td>37.0</td>
-<td>44.0</td>
-<td>52.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">18–24</th>
-<td>49.0</td>
-<td>54.0</td>
-<td>52.0</td>
-<td>50.0</td>
-<td>52.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">25–34</th>
-<td>53.0</td>
-<td>59.0</td>
-<td>57.0</td>
-<td>54.0</td>
-<td>58.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">35–49</th>
-<td>53.0</td>
-<td>59.0</td>
-<td>67.0</td>
-<td>62.0</td>
-<td>52.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">50+</th>
-<td>57.0</td>
-<td>65.0</td>
-<td>67.0</td>
-<td>66.0</td>
-<td>58.0</td>
-</tr>
-</tbody>
-</table>
-
+<figure class="figure">
+<p><img src="DOW5_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
 </div>
 </div>
 </div>
-<p>Unsurprisingly, personality varies noticeably across age groups, with older Americans scoring higher across almost every trait. The biggest changes appear in conscientiousness and agreeableness, which both rise sharply with age, suggesting that Americans tend to become more responsible and socially cooperative over time.</p>
-<p>In the end, the “average American” turns out to be more of a statistical amalgamation rather a true representation. While some people come close to or maybe even match this profile, most differ from it significantly, and what counts as “average” changes across age. In a country as diverse as the US, no single identity can capture everybody. And that’s okay!</p>
+<p>The total amount of shootings each day of the week does not vary as much as the hours, but there is a higher count of incidents on the weekend. This is consistent with what we saw looking at the time of day, suggesting that shootings are more closely tied with periods of increased social activity - particularly nights and weekends - rather than being evenly distributed throughout the week.</p>
+<p>Do similar patterns emerge over longer periods of time, like the months of the year?</p>
+<p>Creating a line plot</p>
+<div id="41c86854-6f6f-43c2-aa6b-a3088987006d" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>shoot[<span class="st">'month'</span>] <span class="op">=</span> shoot[<span class="st">'date_'</span>].dt.month</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>month_counts <span class="op">=</span> shoot[<span class="st">'month'</span>].value_counts().sort_index()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>plt.plot(month_counts.index, month_counts.values, marker <span class="op">=</span> <span class="st">'o'</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Month"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Number of Shootings"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Shootings by Month"</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>plt.xticks(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">13</span>))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="DOW5_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It seems so. The majority of shootings in Philadelphia seem to be concentrated in the spring and summer months, with the highest amount of shooting ocurring in July. This continues to support the working idea that gun violence incidents are associated with more social periods since people tend to engage in more recreational activities in warmer weather. However, it remains unclear whether this pattern is driven by the time of year itself or by the weather conditions that come with it.</p>
+<p>Merging the Philadelphia shooting data with historical weather data, I looked to see how temperature relates to shootings.</p>
+<p>Merging data</p>
+<div id="6b6d14a7-8b67-4378-aa42-213905a078d6" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>weather <span class="op">=</span> pd.read_csv(<span class="st">'data/weather.csv'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="b488d070-489e-4763-94d6-002b24cfc76d" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>weather[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(weather[<span class="st">'date'</span>])</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>shoot_weather <span class="op">=</span> shoot.merge(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    weather,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    left_on <span class="op">=</span> <span class="st">'date_'</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    right_on <span class="op">=</span> <span class="st">'date'</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    how <span class="op">=</span> <span class="st">'left'</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="24e8ffa3-53ae-4e3d-ba9b-a021f09529d7" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>daily_shootings <span class="op">=</span> shoot_weather.groupby(<span class="st">'date_'</span>).size().reset_index(name <span class="op">=</span> <span class="st">'shootings'</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#ChatGPT suggested this data restructure</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>daily <span class="op">=</span> daily_shootings.merge(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    weather,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    left_on <span class="op">=</span> <span class="st">'date_'</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    right_on <span class="op">=</span> <span class="st">'date'</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    how <span class="op">=</span> <span class="st">'left'</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(daily[<span class="st">'high'</span>], daily[<span class="st">'shootings'</span>])</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Temperature"</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Number of Daily Shootings"</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Temperature vs. Number of Daily Shootings"</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="DOW5_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This graph shows the relationship between temperature and the amount of shootings on a given day. There is a clear upward trend, with higher temperatures generally associated with more shootings. This suggests that heat may play a role in driving gun violence. But temperature alone doesn’t fully explain these patterns. By analyzing Philadelphia rain fall patterns, we can better isolate for the effects of outside activity, irrespective of season, in Philadelphia shootings.</p>
+<div id="be86c651-ff39-417f-b60d-68143bffd633" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>shoot_weather[<span class="st">'rained'</span>] <span class="op">=</span> shoot_weather[<span class="st">'rain'</span>] <span class="op">&gt;</span> <span class="dv">0</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>rain_total <span class="op">=</span> shoot_weather.groupby(<span class="st">'rained'</span>).size()</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>rain_total.plot(kind <span class="op">=</span> <span class="st">'bar'</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>plt.xticks([<span class="dv">0</span>, <span class="dv">1</span>], [<span class="st">'No Rain'</span>, <span class="st">'Rain'</span>], rotation <span class="op">=</span> <span class="dv">0</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Number of Shootings"</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Number of Shootings on Rain vs. No Rain Days"</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="DOW5_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Looking at the distribution, shootings are significantly more common on days it does not rain than on rainy days, which is consistent with the idea that reduced outdoor activity may limit opportunities for violent encounters. However, it’s worth noting that, because this comparison reflects total counts counts rather than rates, some of the differences may also be driven by the greater number of rainy days overall.</p>
+<p>Although we tend to think about shooting figures in terms of annual counts, it’s important to acknowledge that shootings in Philadelphia are not randomly distributed, but rather follow distinct patterns across time and weather conditions. Shootings tend to be concentrated around weekend late nights and they rise during the spring and summer months. Additionally, there is a positive relationship between temperature and gun violence, which along with the rainfall data, further suggests that shootings are associated with outdoor and social activity. Even though this analysis was highly limited, understanding these patterns are important for not only making safer decisions but also for designing city policy and systems to reduce gun violence.</p>
 
 
 
